@@ -41,11 +41,13 @@ def preprocess_pipeline(df, preprocess_cfg):
     df = df.drop(columns=["Diastolic blood pressure_0", "Diastolic blood pressure_1"])
 
     # Filter participant with valid features:
-    for feat in tqdm(features, desc='Filtering features'):
+    for feat in tqdm(features, desc="Filtering features"):
         df = df[df[feat.name].apply(feat.is_valid)]
 
     # Decode features:
-    for feat in tqdm(features, desc='Decoding features'):
-        df[feat.name] = df[feat.name].apply(lambda x: feat.decode_map[x] if feat.decode_map else x)
+    for feat in tqdm(features, desc="Decoding features"):
+        df[feat.name] = df[feat.name].apply(
+            lambda x: feat.decode_map[x] if feat.decode_map else x
+        )
 
     return df

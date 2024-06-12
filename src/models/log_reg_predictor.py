@@ -17,14 +17,14 @@ class LogRegPredictor(RiskPredictor):
         # Encode string values:
         le = LabelEncoder()
         for col in data.columns:
-            if data[col].dtype == 'object':
+            if data[col].dtype == "object":
                 data[col] = le.fit_transform(data[col])
-        
+
         # Split data:
         df_train, df_val = train_test_split(
             data, train_size=train_size, test_size=test_size, random_state=split_seed
         )
-        
+
         # Convert to numpy array:
         feature_names = [feature.name for feature in features]
         X_train = df_train[feature_names].to_numpy()

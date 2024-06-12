@@ -35,13 +35,13 @@ class RiskPredictor:
             raise ValueError("No scores available to save.")
 
         # Unpack config:
-        phenotype = config['phenotype']
-        feature_set = config['feature_set']
-        precision = config.get('precision', None)
-        nb_shots = config.get('nb_shots', None)
-        
+        phenotype = config["phenotype"]
+        feature_set = config["feature_set"]
+        precision = config.get("precision", None)
+        nb_shots = config.get("nb_shots", None)
+
         # Creating the full path to save the file;
-        normalized_phenotype = phenotype.lower().replace(" ", '-')
+        normalized_phenotype = phenotype.lower().replace(" ", "-")
         filename = f"rs_{normalized_phenotype}_{feature_set}"
         if precision:
             filename += f"_{precision}"
@@ -56,9 +56,9 @@ class RiskPredictor:
             "config": config,
             "eids": NoIndent(self.eids),
             "y_true": NoIndent([int(i) for i in self.y_true]),
-            "y_scores": NoIndent([float(i) for i in self.y_scores])
+            "y_scores": NoIndent([float(i) for i in self.y_scores]),
         }
-        with open(full_path, 'w') as f:
+        with open(full_path, "w") as f:
             f.write(json.dumps(output, cls=NoIndentEncoder, indent=2))
 
         logger.info(f"Scores saved successfully in {full_path}")

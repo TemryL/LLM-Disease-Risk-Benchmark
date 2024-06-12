@@ -59,7 +59,7 @@ def main():
         seed = args.seed
     except Exception as e:
         logger.error(f"Error parsing arguments: {e}")
-    
+
     # Initialize the output dictionary
     output = {}
 
@@ -68,43 +68,46 @@ def main():
         # Load risk scores
         with open(os.path.join(risk_scores_dir, model_name, file), "r") as f:
             risk_scores = json.load(f)
-            y_true = risk_scores['y_true']
-            y_scores = risk_scores['y_scores']
-            config = risk_scores['config']
-            phenotype = config['phenotype']
-            feature_set = config['feature_set']
-            weight_precision = config.get('precision', None)
-            nb_shots = config.get('nb_shots', None)
-            if 'status' in config.keys():
-                del config['status']
-            if 'submitted_time' in config.keys():
-                del config['submitted_time']
-            if 'phenotype' in config.keys():
-                del config['phenotype']
-        
+            y_true = risk_scores["y_true"]
+            y_scores = risk_scores["y_scores"]
+            config = risk_scores["config"]
+            phenotype = config["phenotype"]
+            feature_set = config["feature_set"]
+            weight_precision = config.get("precision", None)
+            nb_shots = config.get("nb_shots", None)
+            if "status" in config.keys():
+                del config["status"]
+            if "submitted_time" in config.keys():
+                del config["submitted_time"]
+            if "phenotype" in config.keys():
+                del config["phenotype"]
+
         # Evaluate predicted risk scores
         logger.info("Evaluating predicted risk scores ...")
         try:
-            results = evaluate(y_true, y_scores, n_bootstrap=n_bootstrap, n_interp=n_interp, seed=seed, confidence=confidence, verbose=True)
+            results = evaluate(
+                y_true,
+                y_scores,
+                n_bootstrap=n_bootstrap,
+                n_interp=n_interp,
+                seed=seed,
+                confidence=confidence,
+                verbose=True,
+            )
         except Exception as e:
             logger.error(f"Error parsing evaluating predicted risk scores: {e}")
             raise
 
         # Create a key from the combination of feature_set, weight_precision, and nb_shots
         key = (feature_set, weight_precision, nb_shots)
-        
+
         # Update results, initialize the structure if key does not exist
         if key not in output:
-            output[key] = {
-                "results": {},
-                "config": None,
-                "configs": []
-            }
+            output[key] = {"results": {}, "config": None, "configs": []}
 
         output[key]["results"][phenotype] = results
         output[key]["configs"].append(config)
-        
-    
+
     # Save results in output dir:
     output_dir = os.path.join(result_dir, model_name)
     os.makedirs(output_dir, exist_ok=True)
@@ -116,20 +119,22 @@ def main():
         if nb_shots is not None:
             filename += f"_{nb_shots}-shots"
         filename += ".json"
-        
+
         # Check that config file was the same for each phenotype
-        configs = value['configs']
+        configs = value["configs"]
         if all(config == configs[0] for config in configs):
-            value['config'] = configs[0]
-            del value['configs']
+            value["config"] = configs[0]
+            del value["configs"]
         else:
-            raise ValueError(f"Inconsistent configs found for key {(feature_set, weight_precision, nb_shots)}")
-        
+            raise ValueError(
+                f"Inconsistent configs found for key {(feature_set, weight_precision, nb_shots)}"
+            )
+
         # Save:
         file_path = os.path.join(output_dir, filename)
-        with open(file_path, 'w') as f:
+        with open(file_path, "w") as f:
             f.write(json.dumps(value, cls=NoIndentEncoder, indent=2))
-            
+
 
 if __name__ == "__main__":
     main()

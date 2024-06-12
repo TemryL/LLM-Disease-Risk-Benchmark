@@ -32,9 +32,7 @@ def load_predictor(model_name, config):
             llm_id = model_name
             predictor = FewShotPredictor(llm_id, **cfg)
         except Exception as e:
-            logger.error(
-                f"Error loading predictor: {e} "
-            )
+            logger.error(f"Error loading predictor: {e} ")
             raise
     return predictor
 
@@ -46,7 +44,7 @@ def parse_args():
     parser.add_argument("request_file", help="Path to request file")
     parser.add_argument("out_dir", help="Output directory to save risk scores.")
     parser.add_argument(
-        "--data_path", 
+        "--data_path",
         type=str,
         default="data/preprocessed_data.csv",
         help="Path to CSV file containing preprocessed UKB data.",
@@ -91,23 +89,23 @@ def main():
     except Exception as e:
         logger.error(f"Error parsing arguments: {e}")
         raise
-    
+
     # Load request file:
-    with open(request_file, 'r') as f:
+    with open(request_file, "r") as f:
         request_config = json.load(f)
-    model_name = request_config['model']
-    
+    model_name = request_config["model"]
+
     # Update config:
-    if model_name not in ['LogReg', 'XGBoost']:
+    if model_name not in ["LogReg", "XGBoost"]:
         try:
-            torch_dtype = get_torch_dtype(request_config['precision'])
+            torch_dtype = get_torch_dtype(request_config["precision"])
         except ValueError as e:
             logger.error(e)
             raise
-        request_config['nb_shots'] = nb_shots
-        config.few_shot_cfg['nb_shots'] = nb_shots
-        config.few_shot_cfg['batch_size'] = batch_size
-        config.few_shot_cfg['torch_dtype'] = torch_dtype
+        request_config["nb_shots"] = nb_shots
+        config.few_shot_cfg["nb_shots"] = nb_shots
+        config.few_shot_cfg["batch_size"] = batch_size
+        config.few_shot_cfg["torch_dtype"] = torch_dtype
 
     # Load data:
     logger.info("Loading data ...")
@@ -119,10 +117,10 @@ def main():
     except Exception as e:
         logger.error(f"Error loading data: {e}")
         raise
-    
+
     # Load predictor:
     predictor = load_predictor(model_name, config)
-    
+
     for phenotype in config.phenotypes:
         for feature_set, features in config.features.items():
             # Compute risk scores:
@@ -152,8 +150,8 @@ def main():
 
             # Save risk scores:
             logger.info("Saving risk scores ...")
-            request_config['phenotype'] = phenotype
-            request_config['feature_set'] = feature_set
+            request_config["phenotype"] = phenotype
+            request_config["feature_set"] = feature_set
             predictor.save_scores(os.path.join(out_dir, model_name), request_config)
 
 

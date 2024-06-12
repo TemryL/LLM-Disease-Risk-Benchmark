@@ -1,0 +1,15 @@
+# python==3.11
+pandas
+scipy
+matplotlib
+python-dotenv
+seaborn
+scikit-learn
+xgboost
+torch
+torchvision
+torchaudio
+transformers
+sentencepiece
+accelerate
+bitsandbytes

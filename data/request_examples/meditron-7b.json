@@ -1,0 +1,14 @@
+{
+  "model": "epfl-llm/meditron-7b",
+  "base_model": "",
+  "revision": "main",
+  "precision": "float16",
+  "weight_type": "Original",
+  "status": "PENDING",
+  "submitted_time": "2024-05-22T17:37:41Z",
+  "model_type": "\ud83d\udfe2 : pretrained",
+  "likes": 226,
+  "params": 6.739,
+  "license": "llama2",
+  "private": false
+}

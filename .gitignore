@@ -4,6 +4,7 @@ output/
 hf_datasets/
 scripts/
 data/field_to_basket.json
+figures/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
